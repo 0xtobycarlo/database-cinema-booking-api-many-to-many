@@ -6,6 +6,7 @@ async function seed() {
     const movies = await createMovies();
     const screens = await createScreens();
     await createScreenings(screens, movies);
+    const ticketsWithSeating = await createTickets()
 
     process.exit(0);
 }
@@ -25,9 +26,8 @@ async function createCustomer() {
             contact: true
         }
     });
-
     console.log('Customer created', customer);
-
+    
     return customer;
 }
 
@@ -65,7 +65,6 @@ async function createScreens() {
 
         screens.push(screen);
     }
-
     return screens;
 }
 
@@ -91,10 +90,25 @@ async function createScreenings(screens, movies) {
                     }
                 }
             });
-
             console.log('Screening created', screening);
         }
     }
+}
+
+async function createTickets() {
+    const ticketsWithSeats = await prisma.ticket.create({
+  data: {
+   screeningId: 1,
+   customerId: 1,
+    seating: {
+      create: [
+        { seatNum: '8D' },
+        { seatNum: '9D' },
+      ],
+    },
+  },
+})
+return ticketsWithSeats
 }
 
 seed()
